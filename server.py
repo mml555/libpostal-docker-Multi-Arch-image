@@ -1,9 +1,10 @@
 """
 Libpostal HTTP Service
-Provides address parsing via HTTP endpoint.
+Provides address parsing and normalization via HTTP endpoints.
 """
 from flask import Flask, request, jsonify
 from postal.parser import parse_address
+from postal.expand import expand_address
 
 app = Flask(__name__)
 
@@ -31,6 +32,26 @@ def parse():
         components = parse_address(text)
         result = [{'label': label, 'value': value} for value, label in components]
         return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/expand', methods=['POST'])
+def expand():
+    """
+    Expand/normalize an address into canonical forms.
+    
+    Request body: { "text": "123 Main St" }
+    Response: {"expansions": ["123 main street", "123 main saint", ...]}
+    """
+    data = request.get_json() or {}
+    text = data.get('text', '')
+    
+    if not text:
+        return jsonify({'error': 'text is required'}), 400
+    
+    try:
+        expansions = expand_address(text)
+        return jsonify({'expansions': expansions})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

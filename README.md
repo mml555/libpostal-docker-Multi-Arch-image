@@ -10,7 +10,11 @@ Multi-architecture Docker image for [libpostal](https://github.com/openvenues/li
 ## Quick Start
 
 ```bash
-docker run -d -p 4400:4400 --name libpostal ghcr.io/YOURNAME/libpostal-docker:latest
+# From GitHub Container Registry
+docker run -d -p 4400:4400 --name libpostal ghcr.io/mml555/libpostal-docker:latest
+
+# From Docker Hub
+docker run -d -p 4400:4400 --name libpostal mml555/libpostal:latest
 ```
 
 ## Usage
@@ -34,6 +38,21 @@ curl -X POST http://localhost:4400/parser \
 ]
 ```
 
+### Expand/normalize an address
+
+```bash
+curl -X POST http://localhost:4400/expand \
+  -H "Content-Type: application/json" \
+  -d '{"text": "123 Main St"}'
+```
+
+**Response:**
+```json
+{
+  "expansions": ["123 main street", "123 main saint", ...]
+}
+```
+
 ### Health check
 
 ```bash
@@ -45,7 +64,8 @@ curl http://localhost:4400/health
 ```yaml
 services:
   libpostal:
-    image: ghcr.io/YOURNAME/libpostal-docker:latest
+    image: ghcr.io/mml555/libpostal-docker:latest
+    # Or use Docker Hub: mml555/libpostal:latest
     ports:
       - "4400:4400"
     restart: unless-stopped
@@ -66,12 +86,27 @@ docker build -t libpostal .
 docker buildx build --platform linux/amd64,linux/arm64 -t libpostal .
 ```
 
+## Publishing to Docker Hub
+
+If you prefer Docker Hub over GitHub Container Registry:
+
+```bash
+# Login to Docker Hub
+docker login
+
+# Build and push multi-arch image
+docker buildx build --platform linux/amd64,linux/arm64 \
+  -t yourusername/libpostal:latest \
+  --push .
+```
+
 ## API Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/health` | GET | Health check |
 | `/parser` | POST | Parse address into components |
+| `/expand` | POST | Expand/normalize address |
 
 ## Credits
 

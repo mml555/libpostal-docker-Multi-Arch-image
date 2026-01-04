@@ -1,6 +1,6 @@
 FROM python:3.11-bookworm
 
-LABEL org.opencontainers.image.source="https://github.com/YOURNAME/libpostal-docker"
+LABEL org.opencontainers.image.source="https://github.com/mml555/libpostal-docker"
 LABEL org.opencontainers.image.description="Multi-arch libpostal HTTP service"
 LABEL org.opencontainers.image.licenses="MIT"
 
