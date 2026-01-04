@@ -1,0 +1,14 @@
+services:
+  libpostal:
+    build: .
+    # Or use pre-built image:
+    # image: ghcr.io/YOURNAME/libpostal-docker:latest
+    ports:
+      - "4400:4400"
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -sf http://localhost:4400/health || exit 1" ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 60s
